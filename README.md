@@ -86,11 +86,11 @@ from autopsyai import trace_llm, trace_tool
 
 @trace_llm("my-model-call")
 async def call_model(prompt: str) -> str:
-    ...  # your LLM call here
+    ...
 
 @trace_tool("web-search")
 def search(query: str) -> list[str]:
-    ...  # your tool call here
+    ...
 ```
 
 ---
@@ -104,7 +104,6 @@ from autopsyai import TraceReplayer
 
 replayer = TraceReplayer(trace)
 
-# Print every frame
 for frame in replayer.frames():
     indent = "  " * frame.depth
     status = "FAIL" if frame.span.failed else "OK"
@@ -115,9 +114,8 @@ first_fail = replayer.first_failure()
 if first_fail:
     print(f"Root cause: {first_fail.span.name} — {first_fail.span.error}")
 
-# Get the full ancestor chain to the failure
-path = replayer.path_to_failure()
-for frame in path:
+# Full ancestor chain to the failure
+for frame in replayer.path_to_failure():
     print(f"→ {frame.span.name}")
 ```
 
@@ -149,27 +147,48 @@ print(f"Total cost: ~${analysis.total_cost_usd:.5f}")
 ## CLI
 
 ```bash
-# List all stored traces
-autopsyai list
-
-# Show a trace timeline
-autopsyai show <trace-id>
-
-# Show with I/O and analysis
-autopsyai show <trace-id> --io --analyze
-
-# Run analyzers standalone
-autopsyai analyze <trace-id>
-
-# Export to HTML or JSON
-autopsyai export <trace-id> --format html --output report.html
-
-# Database stats + health check
-autopsyai doctor
-
-# Delete failed traces
-autopsyai clean --status failed --yes
+autopsyai list                          # List stored traces
+autopsyai show <trace-id>               # Show trace timeline
+autopsyai show <trace-id> --io --analyze  # With I/O + analysis
+autopsyai analyze <trace-id>            # Run analyzers standalone
+autopsyai export <trace-id> --format html  # Export to HTML
+autopsyai doctor                        # DB health check
+autopsyai clean --status failed --yes   # Delete failed traces
 ```
+
+---
+
+## Test results
+
+```
+platform darwin -- Python 3.14.4, pytest-9.0.3
+
+tests/unit/test_models.py       19 passed
+tests/unit/test_analyzers.py    21 passed
+tests/unit/test_store.py         8 passed
+
+48 passed in 0.34s
+
+mypy autopsyai --strict    → Success: no issues found in 24 source files
+ruff check autopsyai tests → All checks passed!
+```
+
+Coverage:
+
+```
+autopsyai/__init__.py              100%
+autopsyai/analyzers/__init__.py    100%
+autopsyai/models/analysis.py       100%
+autopsyai/analyzers/loop_detector   95%
+autopsyai/core/store.py             96%
+autopsyai/models/span.py            97%
+autopsyai/models/trace.py           94%
+autopsyai/analyzers/base.py         83%
+─────────────────────────────────────
+TOTAL                               54%   (unit tests only)
+```
+
+The uncovered code is CLI, reporters, tracer, and raw integrations — all integration-level components that require real agent runs to exercise meaningfully.
 
 ---
 
@@ -179,9 +198,9 @@ autopsyai clean --status failed --yes
 autopsyai/
 ├── autopsyai/
 │   ├── core/
-│   │   ├── tracer.py          # Async-safe context-propagating tracer
-│   │   ├── store.py           # SQLite trace store (WAL mode)
-│   │   └── replay.py          # Frame-by-frame trace replayer
+│   │   ├── tracer.py           # Async-safe context-propagating tracer
+│   │   ├── store.py            # SQLite trace store (WAL mode)
+│   │   └── replay.py           # Frame-by-frame trace replayer
 │   ├── analyzers/
 │   │   ├── failure_analyzer.py
 │   │   ├── cost_analyzer.py
@@ -200,7 +219,7 @@ autopsyai/
 ├── tests/
 │   ├── unit/
 │   │   ├── test_models.py      # 19 tests
-│   │   ├── test_analyzers.py   # 15 tests
+│   │   ├── test_analyzers.py   # 21 tests
 │   │   └── test_store.py       # 8 tests
 │   └── integration/
 │       └── test_tracer.py      # 7 tests
