@@ -6,8 +6,8 @@ Your multi-step agent failed. Again. Somewhere between step 3 and step 7, someth
 
 `autopsyai` gives you a structured trace of every span, a replay engine to step through them, and automated analyzers that tell you exactly what went wrong and why.
 
-[![PyPI](https://img.shields.io/pypi/v/autopsyai)](https://pypi.org/project/autopsyai/)
-[![Python](https://img.shields.io/pypi/pyversions/autopsyai)](https://pypi.org/project/autopsyai/)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](CHANGELOG.md)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/autopsyai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/KaparthyReddy/autopsyai/actions/workflows/ci.yml/badge.svg)](https://github.com/KaparthyReddy/autopsyai/actions)
 [![mypy: strict](https://img.shields.io/badge/mypy-strict-blue)](https://mypy.readthedocs.io)
