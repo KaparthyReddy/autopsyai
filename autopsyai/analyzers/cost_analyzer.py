@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from autopsyai.analyzers.base import BaseAnalyzer
 from autopsyai.models.analysis import CostBreakdown, Finding, Severity, TraceAnalysis
-from autopsyai.models.trace import Trace
+
+if TYPE_CHECKING:
+    from autopsyai.models.trace import Trace
 
 # Rough pricing per 1M tokens (input / output) as of mid-2024
 # Format: {model_substring: (prompt_per_1m, completion_per_1m)}
@@ -74,7 +78,10 @@ class CostAnalyzer(BaseAnalyzer):
                 findings.append(Finding(
                     code="EXPENSIVE_SPAN",
                     severity=Severity.WARNING,
-                    message=f"Span '{span.name}' cost ~${span_cost:.4f} ({span.usage.total_tokens} tokens)",
+                    message=(
+                        f"Span '{span.name}' cost ~${span_cost:.4f}"
+                        f" ({span.usage.total_tokens} tokens)"
+                    ),
                     span_id=span.span_id,
                     metadata={"cost_usd": span_cost, "tokens": span.usage.total_tokens},
                 ))
@@ -87,7 +94,10 @@ class CostAnalyzer(BaseAnalyzer):
             findings.append(Finding(
                 code="HIGH_TOTAL_COST",
                 severity=Severity.WARNING,
-                message=f"Trace cost ~${analysis.total_cost_usd:.4f} — consider caching or cheaper models",
+                message=(
+                    f"Trace cost ~${analysis.total_cost_usd:.4f}"
+                    " — consider caching or cheaper models"
+                ),
                 metadata={"cost_usd": analysis.total_cost_usd},
             ))
 

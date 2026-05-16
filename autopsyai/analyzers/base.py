@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
-from autopsyai.models.analysis import Finding, TraceAnalysis
-from autopsyai.models.trace import Trace
+if TYPE_CHECKING:
+    from autopsyai.models.analysis import Finding, TraceAnalysis
+    from autopsyai.models.trace import Trace
 
 
 class BaseAnalyzer(ABC):

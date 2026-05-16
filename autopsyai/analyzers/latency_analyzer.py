@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
 from autopsyai.analyzers.base import BaseAnalyzer
 from autopsyai.models.analysis import Finding, LatencyBreakdown, Severity, TraceAnalysis
-from autopsyai.models.trace import Trace
+
+if TYPE_CHECKING:
+    from autopsyai.models.trace import Trace
 
 _SLOW_SPAN_MS = 5_000   # 5 seconds — single span threshold
 _SLOW_TOTAL_MS = 30_000  # 30 seconds — total trace threshold
@@ -63,8 +66,8 @@ class LatencyAnalyzer(BaseAnalyzer):
             # Flag outliers: spans >3x mean for their kind
             for ms, span_id in entries:
                 if len(durations) > 1 and ms > mean * 3:
-                    span = trace.get_span(span_id)
-                    name = span.name if span else span_id
+                    maybe_span = trace.get_span(span_id)
+                    name = maybe_span.name if maybe_span else span_id
                     findings.append(Finding(
                         code="LATENCY_OUTLIER",
                         severity=Severity.INFO,
@@ -82,7 +85,7 @@ class LatencyAnalyzer(BaseAnalyzer):
             findings.append(Finding(
                 code="SLOW_TRACE",
                 severity=Severity.WARNING,
-                message=f"Total trace took {trace.duration_ms / 1000:.1f}s (>{_SLOW_TOTAL_MS / 1000}s threshold)",
+                message=f"Total trace took {trace.duration_ms / 1000:.1f}s (>{_SLOW_TOTAL_MS / 1000}s threshold)",  # noqa: E501
                 metadata={"duration_ms": trace.duration_ms},
             ))
 

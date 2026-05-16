@@ -56,6 +56,7 @@ def trace_llm(
                 return result
 
         import asyncio
+
         if asyncio.iscoroutinefunction(fn):
             return async_wrapper  # type: ignore[return-value]
         return sync_wrapper  # type: ignore[return-value]
@@ -100,6 +101,7 @@ def trace_tool(
                 return result
 
         import asyncio
+
         if asyncio.iscoroutinefunction(fn):
             return async_wrapper  # type: ignore[return-value]
         return sync_wrapper  # type: ignore[return-value]

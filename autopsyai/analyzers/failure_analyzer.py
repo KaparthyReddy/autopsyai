@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from autopsyai.analyzers.base import BaseAnalyzer
 from autopsyai.models.analysis import Finding, Severity, TraceAnalysis
 from autopsyai.models.span import SpanKind, SpanStatus
-from autopsyai.models.trace import Trace
+
+if TYPE_CHECKING:
+    from autopsyai.models.trace import Trace
 
 
 class FailureAnalyzer(BaseAnalyzer):
@@ -31,9 +35,11 @@ class FailureAnalyzer(BaseAnalyzer):
     def analyze(self, trace: Trace, analysis: TraceAnalysis) -> list[Finding]:
         findings: list[Finding] = []
 
-        for span in trace.spans:
-            if span.status == SpanStatus.ERROR:
-                findings.append(self._classify(span))
+        findings.extend(
+            self._classify(span)
+            for span in trace.spans
+            if span.status == SpanStatus.ERROR
+        )
 
         # Identify root cause: the first error with no failed parent
         failed_ids = {s.span_id for s in trace.spans if s.status == SpanStatus.ERROR}

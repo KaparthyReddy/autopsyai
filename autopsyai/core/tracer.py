@@ -8,15 +8,18 @@ through here to record spans into the active trace.
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 import contextvars
 import logging
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
-from autopsyai.core.store import TraceStore
 from autopsyai.models.span import Span, SpanKind, SpanStatus
 from autopsyai.models.trace import Trace, TraceStatus
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, Generator
+
+    from autopsyai.core.store import TraceStore
 
 _log = logging.getLogger(__name__)
 

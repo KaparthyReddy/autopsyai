@@ -11,6 +11,7 @@ from datetime import datetime
 import json
 import logging
 from pathlib import Path
+import time
 from typing import Any
 
 import aiosqlite
@@ -87,8 +88,6 @@ class TraceStore:
     async def save_trace(self, trace: Trace) -> None:
         """Upsert a trace and all its spans."""
         assert self._conn is not None
-        import time
-
         now = time.time()
         await self._conn.execute(
             """INSERT OR REPLACE INTO traces

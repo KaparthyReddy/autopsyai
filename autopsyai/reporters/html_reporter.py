@@ -8,10 +8,9 @@ from typing import TYPE_CHECKING
 
 from jinja2 import Environment
 
-from autopsyai.models.trace import Trace
-
 if TYPE_CHECKING:
     from autopsyai.models.analysis import TraceAnalysis
+    from autopsyai.models.trace import Trace
 
 _TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en">

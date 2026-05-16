@@ -6,10 +6,9 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from autopsyai.models.trace import Trace
-
 if TYPE_CHECKING:
     from autopsyai.models.analysis import TraceAnalysis
+    from autopsyai.models.trace import Trace
 
 
 class JSONReporter:

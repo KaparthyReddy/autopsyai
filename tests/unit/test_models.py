@@ -24,8 +24,10 @@ class TestSpan:
         started = datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
         ended = started + timedelta(milliseconds=250)
         span = Span(
-            trace_id="t1", name="test",
-            started_at=started, ended_at=ended,
+            trace_id="t1",
+            name="test",
+            started_at=started,
+            ended_at=ended,
         )
         assert abs(span.duration_ms - 250.0) < 1.0
 

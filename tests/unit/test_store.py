@@ -34,7 +34,9 @@ class TestTraceStore:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_list_traces(self, tmp_path: Path, simple_trace: Trace, failed_trace: Trace) -> None:
+    async def test_list_traces(
+        self, tmp_path: Path, simple_trace: Trace, failed_trace: Trace
+    ) -> None:
         async with TraceStore(db_path=tmp_path / "db.sqlite") as store:
             await store.save_trace(simple_trace)
             await store.save_trace(failed_trace)
@@ -45,7 +47,9 @@ class TestTraceStore:
         assert failed_trace.trace_id in ids
 
     @pytest.mark.asyncio
-    async def test_list_traces_filter_by_status(self, tmp_path: Path, simple_trace: Trace, failed_trace: Trace) -> None:
+    async def test_list_traces_filter_by_status(
+        self, tmp_path: Path, simple_trace: Trace, failed_trace: Trace
+    ) -> None:
         async with TraceStore(db_path=tmp_path / "db.sqlite") as store:
             await store.save_trace(simple_trace)
             await store.save_trace(failed_trace)

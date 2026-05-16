@@ -47,7 +47,7 @@ def simple_trace() -> Trace:
     t = Trace(name="simple-trace")
     s1 = _make_span(t.trace_id, "agent-step", SpanKind.AGENT)
     s2 = _make_span(t.trace_id, "llm-call", SpanKind.LLM, parent_id=s1.span_id,
-                    usage=LLMUsage(prompt_tokens=100, completion_tokens=50, model="gpt-4o-mini", provider="openai"))
+                    usage=LLMUsage(prompt_tokens=100, completion_tokens=50, model="gpt-4o-mini", provider="openai"))  # noqa: E501
     s3 = _make_span(t.trace_id, "tool-call", SpanKind.TOOL, parent_id=s1.span_id,
                     tool_name="web_search", tool_args={"query": "test"})
     t.spans = [s1, s2, s3]
@@ -60,7 +60,7 @@ def failed_trace() -> Trace:
     t = Trace(name="failed-trace")
     s1 = _make_span(t.trace_id, "agent-step", SpanKind.AGENT)
     s2 = _make_span(t.trace_id, "llm-call", SpanKind.LLM, parent_id=s1.span_id,
-                    usage=LLMUsage(prompt_tokens=200, completion_tokens=10, model="gpt-4o", provider="openai"))
+                    usage=LLMUsage(prompt_tokens=200, completion_tokens=10, model="gpt-4o", provider="openai"))  # noqa: E501
     s3 = _make_span(t.trace_id, "tool-call", SpanKind.TOOL, parent_id=s1.span_id,
                     status=SpanStatus.ERROR, tool_name="file_read",
                     error="FileNotFoundError: config.yaml not found",
@@ -74,14 +74,15 @@ def failed_trace() -> Trace:
 def loop_trace() -> Trace:
     t = Trace(name="loop-trace")
     root = _make_span(t.trace_id, "agent", SpanKind.AGENT)
-    spans = [root]
-    for i in range(5):
-        spans.append(_make_span(
+    spans = [root, *[
+        _make_span(
             t.trace_id, f"search-{i}", SpanKind.TOOL,
             parent_id=root.span_id,
             tool_name="web_search",
             tool_args={"query": "same query every time"},
-        ))
+        )
+        for i in range(5)
+    ]]
     t.spans = spans
     t.finish(TraceStatus.FAILED)
     return t

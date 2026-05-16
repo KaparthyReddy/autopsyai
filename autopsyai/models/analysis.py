@@ -18,10 +18,10 @@ class Severity(str, Enum):
 class Finding(BaseModel):
     """A single finding from an analyzer."""
 
-    code: str                          # e.g. "LOOP_DETECTED", "HIGH_LATENCY_SPAN"
+    code: str  # e.g. "LOOP_DETECTED", "HIGH_LATENCY_SPAN"
     severity: Severity
     message: str
-    span_id: str | None = None         # The span this finding relates to (if any)
+    span_id: str | None = None  # The span this finding relates to (if any)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 

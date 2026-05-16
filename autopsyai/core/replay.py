@@ -9,10 +9,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from autopsyai.models.span import Span
-from autopsyai.models.trace import Trace
+if TYPE_CHECKING:
+    from autopsyai.models.span import Span
+    from autopsyai.models.trace import Trace
 
 _log = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class ReplayFrame:
 
     index: int
     span: Span
-    depth: int                          # nesting depth in the span tree
+    depth: int  # nesting depth in the span tree
     children: list[Span] = field(default_factory=list)
     siblings_before: int = 0
     siblings_after: int = 0
@@ -83,7 +84,7 @@ class TraceReplayer:
         """Get a specific frame by index."""
         self._build()
         if index < 0 or index >= len(self._frames):
-            raise IndexError(f"Frame index {index} out of range (0–{len(self._frames) - 1})")
+            raise IndexError(f"Frame index {index} out of range (0-{len(self._frames) - 1})")
         return self._frames[index]
 
     def failure_frames(self) -> list[ReplayFrame]:

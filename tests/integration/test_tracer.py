@@ -40,12 +40,23 @@ class TestTracer:
     @pytest.mark.asyncio
     async def test_failed_span_records_error(self) -> None:
         tracer = Tracer()
-        with pytest.raises(ValueError, match="intentional"):
-            async with tracer.trace("error-run") as trace:
-                with tracer.span("bad-step") as span:
+        trace = None
+        span = None
+
+        async def _run() -> None:
+            nonlocal trace, span
+            async with tracer.trace("error-run") as t:
+                trace = t
+                with tracer.span("bad-step") as s:
+                    span = s
                     raise ValueError("intentional")
 
+        with pytest.raises(ValueError, match="intentional"):
+            await _run()
+
+        assert trace is not None
         assert trace.status == TraceStatus.FAILED
+        assert span is not None
         assert span.status == SpanStatus.ERROR
         assert span.error == "intentional"
         assert span.error_type == "ValueError"
@@ -53,17 +64,17 @@ class TestTracer:
     @pytest.mark.asyncio
     async def test_trace_completion_on_success(self) -> None:
         tracer = Tracer()
-        async with tracer.trace("success-run") as trace:
+        async with tracer.trace("success-run") as t:
             with tracer.span("ok-step"):
                 pass
 
-        assert trace.status == TraceStatus.COMPLETED
-        assert trace.finished_at is not None
+        assert t.status == TraceStatus.COMPLETED
+        assert t.finished_at is not None
 
     @pytest.mark.asyncio
     async def test_span_duration_is_positive(self) -> None:
         tracer = Tracer()
-        async with tracer.trace("timing") as trace:
+        async with tracer.trace("timing"):
             with tracer.span("measured") as span:
                 import asyncio
                 await asyncio.sleep(0.01)

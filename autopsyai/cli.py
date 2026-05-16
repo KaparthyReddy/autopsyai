@@ -52,7 +52,9 @@ def main(
 def show(
     trace_id: Annotated[str, typer.Argument(help="Trace ID to display.")],
     show_io: Annotated[bool, typer.Option("--io", help="Show span inputs/outputs.")] = False,
-    analyze_flag: Annotated[bool, typer.Option("--analyze", "-a", help="Also run analyzers.")] = False,
+    analyze_flag: Annotated[
+        bool, typer.Option("--analyze", "-a", help="Also run analyzers.")
+    ] = False,
 ) -> None:
     """Display a recorded trace as a visual timeline."""
     from autopsyai.analyzers import analyze
